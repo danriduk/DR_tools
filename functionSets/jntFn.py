@@ -2,8 +2,11 @@
 Super Joint class
 '''
 
+## MAYA MODULES ##
 import maya.cmds as mc
-from . import overrides
+
+## CUSTOM MODULES ##
+from ..utils import overrides
 
 
 class Jnt():
@@ -18,12 +21,12 @@ class Jnt():
     """
 
     def __init__(self,
-            edit=None,
-            side='c',
-            name='joint',
-            suffix='jnt',
-            pos=(0, 0, 0),
-            **kwargs):
+                 edit=None,
+                 side='c',
+                 name='joint',
+                 suffix='jnt',
+                 pos=(0, 0, 0),
+                 **kwargs):
 
         self.jnt = None
         self.type = type
@@ -49,8 +52,10 @@ class Jnt():
         if not mc.objExists(self.jnt):
             return None
 
-        chain = [ jnt for jnt in mc.listRelatives(self.jnt, type='joint', c=1, ad=1) ][::-1]
+        chain = [jnt for jnt in mc.listRelatives(
+            self.jnt, type='joint', c=1, ad=1)]
         chain.insert(0, self.jnt)
+
         return chain
 
     def _unparentChild(self, obj):
