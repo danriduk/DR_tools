@@ -21,31 +21,10 @@ class Jnt():
     """
 
     def __init__(self,
-                 edit=None,
-                 side='c',
-                 name='joint',
-                 suffix='jnt',
-                 pos=(0, 0, 0),
-                 **kwargs):
+                 node
+                 ):
 
-        self.jnt = None
-        self.type = type
-
-        kwargs['name'] = '{0}_{1}_{2}'.format(side, name, suffix)
-        for key in kwargs:
-            kwargs[key] = kwargs[key]
-
-        kwargs['radius'] = 1.0
-        if not edit:
-            self._create(flags=kwargs)
-            mc.xform(self.jnt, t=pos)
-        else:
-            self.jnt = edit
-
-    def _create(self, flags={}):
-        # method to create joint
-        self.jnt = mc.joint(**flags)
-        mc.select(cl=1)
+        self.jnt = node
 
     def getJntChain(self):
         # returns list of child joints

@@ -10,15 +10,17 @@ from . import jointChain
 from ..functionSets import controlFn
 from ..utils import heirarchy
 
+reload(jointChain)
 
-class FKChain(jointChain.jntChain):
+
+class FKChain(jointChain.JntChain):
     def __init__(
-            self,
-            prefix='c',
-            name='fkChain',
-            shape='circle',
-            color='auto',
-            posList=[(0, 0, 0)]
+        self,
+        prefix='c',
+        name='fkChain',
+        shape='circle',
+        color='auto',
+        posList=[(0, 0, 0)]
     ):
 
         self.prefix = prefix
@@ -44,6 +46,7 @@ class FKChain(jointChain.jntChain):
         # call parent class build method
         jointChain.JntChain.build(self)
 
+        print 'FOO'
         # build
         self._addControls()
         self._fkParenting()
@@ -52,7 +55,7 @@ class FKChain(jointChain.jntChain):
         if len(self.jnts) < 1:
             return
 
-        for jnt in self.jnts:
+        for jnt in reversed(self.jnts):
             fkCon = controlFn.Control(
                 prefix=self.prefix,
                 name=self.name,
@@ -63,7 +66,7 @@ class FKChain(jointChain.jntChain):
                 color=self.color
             )
 
-            fkCon.transformControlShape(fkCon.con, ro=(0, 0, 90))
+            # fkCon.transformControlShape(fkCon.con, ro=(90, 0, 90))
 
             self.cons.append(fkCon.con)
             self.consClass.append(fkCon)

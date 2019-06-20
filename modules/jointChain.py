@@ -8,7 +8,7 @@ import maya.cmds as mc
 ## CUSTOM MODULES ##
 from ..utils import checks
 from ..functionSets import jntFn
-from ..utils import checks, heirarchy
+from ..utils import checks, hierarchy
 
 
 class JntChain():
@@ -43,14 +43,8 @@ class JntChain():
 
             self.jnts.append(jnt)
 
-        utils.iterParenting(self.jnts)
+        hierarchy.iterParenting(self.jnts)
 
         # orient chain
         oriJnt = jntFn.Jnt(edit=self.jnts[-1])
         oriJnt.orientChain()
-
-    def displayAxis(self, jnts=[]):
-        # toggle display axis
-        for jnt in jnts:
-            attr = mc.getAttr('{0}.displayLocalAxis'.format(jnt))
-            mc.setAttr('{0}.displayLocalAxis'.format(jnt), not attr)
