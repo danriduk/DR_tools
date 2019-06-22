@@ -9,7 +9,7 @@ import maya.cmds as mc
 from ..utils import overrides
 
 
-class Jnt():
+class JointFn():
     """
     main joint class used throughout
     @param side: (str), specify side for joint valid sides (c,l,r)
@@ -23,6 +23,9 @@ class Jnt():
     def __init__(self,
                  node
                  ):
+
+        if mc.nodeType(node) != 'joint':
+            mc.error('Given node is not of type joint')
 
         self.jnt = node
 
@@ -48,6 +51,8 @@ class Jnt():
     def _orientPlanar(self, upVector=(0, 1, 0)):
         # orient the middle joint of a 3 joint chain too its plane
         chain = self.getJntChain()
+        chain.sort()
+
         for jnt in chain:
             par = mc.listRelatives(jnt, p=1, pa=1)
             if not par:
@@ -80,6 +85,8 @@ class Jnt():
     def _zeroEndOrients(self):
         # orients the end joint too its parent joint
         chain = self.getJntChain()
+        chain.sort()
+
         if chain:
             mc.setAttr('{0}.jointOrient'.format(chain[-1]), 0, 0, 0)
 

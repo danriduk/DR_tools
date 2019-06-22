@@ -10,7 +10,7 @@ import maya.cmds as mc
 
 ## CUSTOM MODULES ##
 from ..data import dictionaries
-from ..utils import overrides, checks, heirarchy
+from ..utils import overrides, checks, hierarchy
 
 
 class Control():

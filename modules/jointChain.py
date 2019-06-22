@@ -9,9 +9,10 @@ import maya.cmds as mc
 from ..utils import checks
 from ..functionSets import jntFn
 from ..utils import checks, hierarchy
+reload(jntFn)
 
 
-class JntChain():
+class JntChain(object):
     def __init__(
             self,
             prefix='c',
@@ -46,5 +47,5 @@ class JntChain():
         hierarchy.iterParenting(self.jnts)
 
         # orient chain
-        oriJnt = jntFn.Jnt(edit=self.jnts[-1])
+        oriJnt = jntFn.JointFn(self.jnts[-1])
         oriJnt.orientChain()

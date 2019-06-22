@@ -8,12 +8,12 @@ import maya.cmds as mc
 ## CUSTOM MODULES ##
 from . import jointChain
 from ..functionSets import controlFn
-from ..utils import heirarchy
-
+from ..utils import hierarchy
 reload(jointChain)
+reload(controlFn)
 
 
-class FKChain(jointChain.JntChain):
+class FKChain(jointChain.JntChain, object):
     def __init__(
         self,
         prefix='c',
@@ -30,8 +30,7 @@ class FKChain(jointChain.JntChain):
         self.posList = posList
 
         # init parent class
-        jointChain.JntChain.__init__(
-            self,
+        super(FKChain, self).__init__(
             prefix=self.prefix,
             name=self.name,
             suffix='jnt',
@@ -44,9 +43,8 @@ class FKChain(jointChain.JntChain):
 
     def build(self):
         # call parent class build method
-        jointChain.JntChain.build(self)
+        super(FKChain, self).build()
 
-        print 'FOO'
         # build
         self._addControls()
         self._fkParenting()
@@ -66,7 +64,7 @@ class FKChain(jointChain.JntChain):
                 color=self.color
             )
 
-            # fkCon.transformControlShape(fkCon.con, ro=(90, 0, 90))
+            fkCon.transformControlShape(fkCon.con, ro=(0, 90, 0))
 
             self.cons.append(fkCon.con)
             self.consClass.append(fkCon)
