@@ -13,12 +13,12 @@ from ..utils import hierarchy
 
 class IKChain(jointChain.JntChain, object):
     def __init__(
-            self,
-            prefix='c',
-            name='ikChain',
-            shape='cube',
-            color='auto',
-            posList=([0, 0, 0])
+        self,
+        prefix='c',
+        name='ikChain',
+        shape='cube',
+        color='auto',
+        posList=([0, 0, 0])
     ):
 
         self.prefix = prefix

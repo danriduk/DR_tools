@@ -26,21 +26,45 @@ class JntChain(object):
         self.suffix = suffix
         self.posList = posList
 
+        self.TMPLgrp = None
+        self.locs = []
         self.jnts = []
 
-    def build(self):
-        # create joints from pos list
+    def createTemplate(self):
+        # get unique name
+        fullName = checks.uniqueName(self.prefix, self.name, 'TMPL')
+        # create template top group
+        self.TMPLgrp = mc.group(em=1, n=fullName)
+        mc.xform(self.TMPLgrp, t=self.posList[0])
+
+        # create locators from pos list
         for pos in self.posList:
-            # clear selection to create joints in root
             mc.select(cl=1)
 
             # get unique name
-            fullName = checks.uniqueName(self.prefix, self.name, self.suffix)
-            nameSplit = fullName.split('_')
-            jntName = '{0}_{1}_{2}'.format(
-                nameSplit[0], nameSplit[1], nameSplit[-1])
+            fullName = checks.uniqueName(self.prefix, self.name, 'LOC')
 
-            jnt = mc.joint(n=jntName, p=pos)
+            loc = mc.spaceLocator(n=fullName)[0]
+            mc.xform(loc, t=pos)
+            mc.parent(loc, self.TMPLgrp)
+
+            self.locs.append(loc)
+
+        hierarchy.iterParenting(self.locs)
+        self.locs.sort()
+
+    def build(self):
+        # create joints from pos list from template locs
+        if self.locs:
+            self.posList = [mc.xform(loc, q=1, ws=1, t=1) for loc in self.locs]
+
+        for pos in self.posList:
+            # get unique name
+            fullName = checks.uniqueName(self.prefix, self.name, self.suffix)
+
+            # clear selection to create joints in root
+            mc.select(cl=1)
+            jnt = mc.joint(n=fullName, p=pos)
 
             self.jnts.append(jnt)
 
