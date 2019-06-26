@@ -6,12 +6,53 @@ utility function for vectors
 import maya.cmds as mc
 import maya.OpenMaya as om
 
+## CUSTOM MODULES ##
+from . import checks
 
-def createVector(node):
-    if not mc.objectType(node) == 'transform':
-        mc.error('{0} not of type, transform'.format(node))
 
-    pos = mc.xform(node, q=1, ws=1, t=1)
+def createVector(pos, buildLoc=False):
+    name = checks.uniqueName('v', '', 'loc')
+
     vector = om.MVector(pos[0], pos[1], pos[2])
+
+    if buildLoc:
+        loc = mc.spaceLocator(n=name)[0]
+        grp = mc.group(em=1, n=name.replace('loc', 'grp'))
+        mc.xform(loc, t=(vector.x, vector.y, vector.z))
+        mc.parent(loc, grp)
+
+        return vector, loc
+
+    return vector
+
+
+def addVectors(vec1, vec2, buildLoc=False):
+    name = checks.uniqueName('v', 'AplusB', 'loc')
+
+    vector = vec1 + vec2
+
+    if buildLoc:
+        loc = mc.spaceLocator(n=name)[0]
+        grp = mc.group(em=1, n=name.replace('loc', 'grp'))
+        mc.xform(loc, t=(vector.x, vector.y, vector.z))
+        mc.parent(loc, grp)
+
+        return vector, loc
+
+    return vector
+
+
+def subVectors(vec1, vec2, buildLoc=False):
+    name = checks.uniqueName('v', 'AplusB', 'loc')
+
+    vector = vec1 - vec2
+
+    if buildLoc:
+        loc = mc.spaceLocator(n=name)[0]
+        grp = mc.group(em=1, n=name.replace('loc', 'grp'))
+        mc.xform(loc, t=(vector.x, vector.y, vector.z))
+        mc.parent(loc, grp)
+
+        return vector, loc
 
     return vector

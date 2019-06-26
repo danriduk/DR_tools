@@ -54,6 +54,7 @@ class JntChain(object):
         self.locs.sort()
 
     def build(self):
+        mc.hide(self.TMPLgrp)
         # create joints from pos list from template locs
         if self.locs:
             self.posList = [mc.xform(loc, q=1, ws=1, t=1) for loc in self.locs]
@@ -73,3 +74,5 @@ class JntChain(object):
         # orient chain
         oriJnt = jntFn.JointFn(self.jnts[-1])
         oriJnt.orientChain()
+
+        self.jnts.sort()

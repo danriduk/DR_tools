@@ -53,7 +53,7 @@ class FKChain(jointChain.JntChain, object):
         if len(self.jnts) < 1:
             return
 
-        for jnt in reversed(self.jnts):
+        for jnt in self.jnts:
             fkCon = controlFn.Control(
                 prefix=self.prefix,
                 name=self.name,
@@ -64,10 +64,10 @@ class FKChain(jointChain.JntChain, object):
                 color=self.color
             )
 
-            fkCon.transformControlShape(fkCon.con, ro=(0, 90, 0))
-
             self.cons.append(fkCon.con)
             self.consClass.append(fkCon)
+
+            # fkCon.transformControlShape(fkCon.con, ro=(0, 90, 0))
 
             # constrain joint too control
             mc.parentConstraint(fkCon.con, jnt)

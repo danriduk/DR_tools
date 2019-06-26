@@ -8,9 +8,9 @@ import maya.cmds as mc
 ## CUSTOM MODULES ##
 from . import jointChain
 from ..functionSets import controlFn
-from ..utils import hierarchy
+from ..utils import hierarchy, vectors
 from ..base import ikhandle
-reload(ikhandle)
+reload(jointChain)
 
 
 class IKChain(jointChain.JntChain, object):
@@ -30,6 +30,7 @@ class IKChain(jointChain.JntChain, object):
         self.posList = posList
 
         self.ikCon = None
+        self.elbowCon = None
         self.hdl = None
 
         # init parent class
@@ -46,12 +47,14 @@ class IKChain(jointChain.JntChain, object):
 
         # create ikhandle
         self.hdl = ikhandle.IKHandle(prefix=self.prefix, name=self.name,
-                                     start=self.jnts[-1], end=self.jnts[0])
+                                     start=self.jnts[0], end=self.jnts[-1])
         self.hdl.build()
 
         # build control
         self._addControls()
         mc.parent(self.hdl.handle[0], self.ikCon.con)
+
+        # print self.jnts
 
     def _addControls(self):
         # add ik control to end joint
@@ -61,5 +64,35 @@ class IKChain(jointChain.JntChain, object):
             suffix='con',
             shape=self.shape,
             color=self.color,
-            translateTo=self.jnts[0]
+            translateTo=self.jnts[-1]
         )
+
+        # build pole vector con
+        self._poleVectorPos()
+        self.elbowCon = controlFn.Control(
+            prefix=self.prefix,
+            name='{0}PV'.format(self.name),
+            suffix='con',
+            shape='sphere',
+            color=self.color,
+            scale=0.5
+        )
+
+        mc.xform(self.elbowCon.grps[0], t=(self.poleVectorPos))
+        mc.poleVectorConstraint(self.elbowCon.con, self.hdl.handle[0])
+
+    def _poleVectorPos(self):
+        rootVec = vectors.createVector(mc.xform(self.jnts[0], q=1, t=1, ws=1))
+        midVec = vectors.createVector(mc.xform(self.jnts[1], q=1, t=1, ws=1))
+        endVec = vectors.createVector(mc.xform(self.jnts[2], q=1, t=1, ws=1))
+
+        rootToEndVec = (endVec - rootVec)
+        rootToMidVec = (midVec - rootVec)
+
+        scaleVal = (rootToEndVec * rootToMidVec) / \
+            (rootToEndVec * rootToEndVec)
+
+        rootToEndElbowVec = rootToEndVec * scaleVal + rootVec
+
+        self.poleVectorPos = ((midVec - rootToEndElbowVec) *
+                              (rootToEndVec.length() / 2)) + midVec
